@@ -36,8 +36,19 @@ exports.createRandoms = function (itemId, itemsCount) {
     };
     new Item(item).save()
   }
+};
 
+exports.imageItem = function (req, res) {
+  var token = req.body.token;
+  var decoded = jwtDecode(token);
+  var role = decoded.role;
+  var id = req.body.itemId;
 
+  let newItem = new Item();
+  newItem.img.data = fs.readFileSync(req.files.userPhoto.path);
+  newItem.img.contentType = 'image/png';
+  newItem.save();
+  return res.sendStatus(200);
 };
 
 exports.getItem = function (id) {

@@ -17,6 +17,8 @@ router.get('/items', Auth, itemCtrl.allItems);
 router.post('/item', Auth, itemCtrl.createItem);
 router.put('/item', Auth, itemCtrl.updateItem);
 
+router.post('/item/image', Auth, itemCtrl.imageItem);
+
 router.post('/items', Auth, itemCtrl.createItems);
 
 module.exports = router;

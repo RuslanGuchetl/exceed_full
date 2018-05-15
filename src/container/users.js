@@ -10,6 +10,7 @@ export default class UsersList extends React.Component {
     super(props);
     this.state = {
       data: [],
+      file: '',
       isload: false
     }
   }
@@ -35,6 +36,35 @@ export default class UsersList extends React.Component {
       });
   }
 
+  handleSubmit(e) {
+    e.preventDefault();
+    console.log('handle uploading-', this.state.file);
+
+    let formData = new FormData();
+    formData.append('token', localStorage.getItem('token'));
+    formData.append('photo', this.state.file);
+    fetch('/image/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+  }
+
+
+  handleImageChange(e) {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({file: file});
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+
   render() {
     const {isload} = this.state;
 
@@ -43,6 +73,15 @@ export default class UsersList extends React.Component {
         {isload && (
           <TableList array={this.state.data}/>
         )}
+        <form onSubmit={(e) => this.handleSubmit(e)}>
+          <input className="fileInput"
+                 type="file"
+                 onChange={(e) => this.handleImageChange(e)}/>
+          <button className="submitButton"
+                  type="submit"
+                  onClick={(e) => this.handleSubmit(e)}>Upload Image
+          </button>
+        </form>
       </div>
     );
   }

@@ -8,6 +8,7 @@ var itemsSchema = new mongoose.Schema({
   accessories: Array,
   itemName: String,
   price: String,
+  img: { data: Buffer, contentType: String },
   createDate: {type: Date, default: Date.now}
 });
 

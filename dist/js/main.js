@@ -11068,6 +11068,7 @@ var UsersList = function (_React$Component) {
 
     _this.state = {
       data: [],
+      file: '',
       isload: false
     };
     return _this;
@@ -11096,15 +11097,67 @@ var UsersList = function (_React$Component) {
       });
     }
   }, {
+    key: "handleSubmit",
+    value: function handleSubmit(e) {
+      e.preventDefault();
+      console.log('handle uploading-', this.state.file);
+
+      var formData = new FormData();
+      formData.append('token', localStorage.getItem('token'));
+      formData.append('photo', this.state.file);
+      fetch('/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+    }
+  }, {
+    key: "handleImageChange",
+    value: function handleImageChange(e) {
+      var _this3 = this;
+
+      e.preventDefault();
+
+      var reader = new FileReader();
+      var file = e.target.files[0];
+
+      reader.onloadend = function () {
+        _this3.setState({ file: file });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this4 = this;
+
       var isload = this.state.isload;
 
 
       return _react2.default.createElement(
         "div",
         null,
-        isload && _react2.default.createElement(_tableList2.default, { array: this.state.data })
+        isload && _react2.default.createElement(_tableList2.default, { array: this.state.data }),
+        _react2.default.createElement(
+          "form",
+          { onSubmit: function onSubmit(e) {
+              return _this4.handleSubmit(e);
+            } },
+          _react2.default.createElement("input", { className: "fileInput",
+            type: "file",
+            onChange: function onChange(e) {
+              return _this4.handleImageChange(e);
+            } }),
+          _react2.default.createElement(
+            "button",
+            { className: "submitButton",
+              type: "submit",
+              onClick: function onClick(e) {
+                return _this4.handleSubmit(e);
+              } },
+            "Upload Image"
+          )
+        )
       );
     }
   }]);
