@@ -5,6 +5,7 @@ import Media from "react-media"
 import 'babel-polyfill'
 import ReactPaginate from 'react-paginate'
 import Http from '../libs/http.js'
+import {serverUrl} from '../configs/server-url';
 import ModalWind from '../component/modalWindow'
 
 export default class ProductList extends React.Component {
@@ -44,7 +45,7 @@ export default class ProductList extends React.Component {
       this.props.onUpd('Shop');
       this.props.onUpd.bind(this);
     }
-    let url = "http://localhost:3000/items";
+    let url = serverUrl + "/items";
     let data = localStorage.getItem('token');
     let http = new Http();
 
@@ -183,7 +184,7 @@ export default class ProductList extends React.Component {
   }
 
   updateArray() {
-    let url = "http://localhost:3000/items";
+    let url = serverUrl + "/items";
     let data = localStorage.getItem('token');
     let http = new Http();
     let body = document.getElementById('root');
@@ -263,7 +264,7 @@ export default class ProductList extends React.Component {
     if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/categories";
+      let url = serverUrl + "/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "itemName": c
@@ -300,7 +301,7 @@ export default class ProductList extends React.Component {
     if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/categories";
+      let url = serverUrl + "/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "id": this.state.currentCategId,
@@ -397,7 +398,7 @@ export default class ProductList extends React.Component {
     if (sure) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/categories";
+      let url = serverUrl + "/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "role": localStorage.getItem('role'),
@@ -596,7 +597,7 @@ export default class ProductList extends React.Component {
   }
 
   addItem1() {
-    let url = "http://localhost:3000/items";
+    let url = serverUrl + "/items";
     let data = localStorage.getItem('token');
     let http = new Http();
     let body = document.getElementById('root');
@@ -828,18 +829,18 @@ export default class ProductList extends React.Component {
 
         {showEditCateg && (
           <ModalWind inputId="inputEditCateg" title="category" id={this.state.currentCategId}
-                     url="http://localhost:3000/categories"
+                     url={serverUrl + "/categories"}
                      value={this.state.editCategInp} onUpd={this.updateItem.bind(this)}
                      closeModal={this.closeModal.bind(this)}/>
         )}
         {showAddItem && (
-          <ModalWind inputId="inputAddItem" title="item" id={this.state.currentCategId} url="http://localhost:3000/item"
+          <ModalWind inputId="inputAddItem" title="item" id={this.state.currentCategId} url={serverUrl + "/item"}
                      value="" onAdd={this.addItem.bind(this)}
                      closeModal={this.closeModalAdd.bind(this)}/>
         )}
         {showEditItem && (
           <ModalWind inputId="inputEditItem" title="item" id={this.state.currentCategId}
-                     url="http://localhost:3000/item"
+                     url={serverUrl + "/item"}
                      value="" onUpd={this.updateItem.bind(this)} items={this.state.editingItem}
                      closeModal={this.closeModalEdit.bind(this)}/>
         )}

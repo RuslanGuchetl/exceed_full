@@ -5,6 +5,7 @@ import Sha256 from "js-sha256";
 import 'babel-polyfill'
 import Http from '../libs/http.js'
 import {Compare} from '../component/compare';
+import {serverUrl} from '../configs/server-url';
 
 export default class Login extends React.Component {
   constructor() {
@@ -36,7 +37,7 @@ export default class Login extends React.Component {
       e.preventDefault();
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/login";
+      let url = serverUrl + "/login";
       let data = JSON.stringify({"login": uLogin.value, "password": pass});
       let http = new Http();
       http.post(url, data)

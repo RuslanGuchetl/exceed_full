@@ -4,6 +4,8 @@ import TableList from '../component/tableList';
 import 'babel-polyfill'
 import Http from '../libs/http.js'
 import {Redirect} from 'react-router'
+import {serverUrl} from '../configs/server-url';
+
 
 export default class UsersList extends React.Component {
   constructor(props) {
@@ -16,7 +18,7 @@ export default class UsersList extends React.Component {
   }
 
   componentWillMount() {
-    let url = "http://localhost:3000/users";
+    let url = serverUrl + "/users";
     let data = localStorage.getItem('token');
     let http = new Http();
     let body = document.getElementById('root');
@@ -43,7 +45,8 @@ export default class UsersList extends React.Component {
     let formData = new FormData();
     formData.append('token', localStorage.getItem('token'));
     formData.append('photo', this.state.file);
-    fetch('http://localhost:3000/image/upload', {
+    let url = serverUrl + '/image/upload';
+    fetch(url, {
       method: 'POST',
       body: formData
     });

@@ -5,6 +5,7 @@ import {withLastLocation} from 'react-router-last-location'
 import Media from "react-media"
 import 'babel-polyfill'
 import Http from '../libs/http.js'
+import {serverUrl} from '../configs/server-url';
 import SettingsRouter from './../routes/settings'
 import ProductsRouter from './../routes/products'
 import UsersRouter from './../routes/users'
@@ -112,7 +113,7 @@ export default class Profile extends React.Component {
 
 
 function checkurl() {
-  let url = "http://localhost:3000/user";
+  let url = serverUrl + "/user";
   let data = localStorage.getItem('token');
   let body = document.getElementById('root');
   body.className += ' ' + 'modalBlock';

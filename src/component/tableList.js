@@ -1,6 +1,7 @@
 import React, {Component} from "react";
 import 'babel-polyfill'
 import Http from '../libs/http.js'
+import {serverUrl} from '../configs/server-url'
 
 export default class TableList extends React.Component {
   constructor(props) {
@@ -14,7 +15,7 @@ export default class TableList extends React.Component {
     let id = e.target.id;
     let result = confirm('Are you sure?');
     if (result) {
-      let url = "http://localhost:3000/users";
+      let url = serverUrl + "/users";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "id": id

@@ -5,6 +5,7 @@ import Sha256 from "js-sha256";
 import 'babel-polyfill'
 import Http from '../libs/http.js'
 import RadioButtons from './radiobuttons'
+import {serverUrl} from '../configs/server-url';
 
 
 export default class EditItem extends React.Component {
@@ -56,7 +57,7 @@ export default class EditItem extends React.Component {
     let body = document.getElementById('root');
     body.className += ' ' + 'modalBlock';
     if (userNewPass == '') {
-      let url = "http://localhost:3000/user";
+      let url = serverUrl + "/user";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "login": userLogin,
@@ -82,7 +83,7 @@ export default class EditItem extends React.Component {
           console.log('Error: ', e);
         });
     } else {
-      let url = "http://localhost:3000/user";
+      let url = serverUrl + "/user";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "login": userLogin,
@@ -123,7 +124,7 @@ export default class EditItem extends React.Component {
       if (ready) {
         let body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        let url = "http://localhost:3000/user";
+        let url = serverUrl + "/user";
         let data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "current": Sha256(userCurrent)

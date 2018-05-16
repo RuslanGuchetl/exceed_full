@@ -3,7 +3,8 @@ import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import InputItem from '../component/registr';
 import Http from '../libs/http.js'
 import {Redirect} from 'react-router'
-import Sha256 from "js-sha256";
+import {serverUrl} from '../configs/server-url';
+
 
 export default class Regist extends React.Component {
   constructor() {
@@ -33,7 +34,7 @@ export default class Regist extends React.Component {
         e.preventDefault();
         let body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        let url = "http://localhost:3000/registration";
+        let url = serverUrl + "/registration";
         let data = JSON.stringify({
           "login": newLogin,
           "password": userPw.value,

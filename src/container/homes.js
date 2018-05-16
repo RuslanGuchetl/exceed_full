@@ -2,6 +2,7 @@ import React, {Component} from "react";
 import {Redirect} from 'react-router'
 import 'babel-polyfill'
 import Http from '../libs/http.js'
+import {serverUrl} from '../configs/server-url';
 import ArrayEditor from '../component/arrayEditor'
 
 export default class Homes extends React.Component {
@@ -19,7 +20,7 @@ export default class Homes extends React.Component {
   componentWillMount() {
     let body = document.getElementById('root');
     body.className += ' ' + 'modalBlock';
-    let url = "http://localhost:3000/categories";
+    let url = serverUrl + "/categories";
     let data = localStorage.getItem('token');
     let http = new Http();
     http.get(url, data)
@@ -46,7 +47,7 @@ export default class Homes extends React.Component {
     if (data == 'category') {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/categories";
+      let url = serverUrl + "/categories";
       let data = localStorage.getItem('token');
       let http = new Http();
       http.get(url, data)
@@ -61,7 +62,7 @@ export default class Homes extends React.Component {
     else if (data == 'item') {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "http://localhost:3000/item";
+      let url = serverUrl + "/item";
       let data = localStorage.getItem('token');
       let http = new Http();
       http.get(url, data)
@@ -88,7 +89,7 @@ export default class Homes extends React.Component {
 
   getItem1(thisId) {
     let xhr = new XMLHttpRequest();
-    let url = "http://localhost:3000/item";
+    let url = serverUrl + "/item";
     let body = document.getElementById('root');
     body.className += ' ' + 'modalBlock';
     xhr.open("POST", url, true);
@@ -126,12 +127,12 @@ export default class Homes extends React.Component {
     return (
       <div>
         {show1 && (
-          <ArrayEditor urlUpd="http://localhost:3000/updatecategories" urlAdd="http://localhost:3000/savecategories" btnId="categbtn" array={this.state.data} idName="_id"
+          <ArrayEditor urlUpd={serverUrl + "/updatecategories"} urlAdd={serverUrl + "/savecategories"} btnId="categbtn" array={this.state.data} idName="_id"
                        field="categoryName" title="category" getCategory={this.getItem.bind(this)} hideComp={this.hider.bind(this)}
                        updArr={this.updateArray.bind(this)}/>
         )}
         {show2 && (
-          <ArrayEditor urlUpd="http://localhost:3000/updateitem" urlAdd="http://localhost:3000/saveitem" btnId="itembtn" array={this.state.data2}
+          <ArrayEditor urlUpd={serverUrl + "/updateitem"} urlAdd={serverUrl + "/saveitem"} btnId="itembtn" array={this.state.data2}
                        val={this.state.item} idName="_id" field="itemName" title="item"
                        updArr={this.updateArray.bind(this)}/>
         )}

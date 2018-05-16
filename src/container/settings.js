@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Link} from "react-router-dom";
 import {Redirect} from 'react-router'
 import EditItem from '../component/editProfile';
 
+
 export default class Settings extends React.Component {
   constructor(props) {
     super(props);
