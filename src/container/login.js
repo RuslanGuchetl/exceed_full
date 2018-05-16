@@ -36,7 +36,7 @@ export default class Login extends React.Component {
       e.preventDefault();
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "/login";
+      let url = "http://localhost:3000/login";
       let data = JSON.stringify({"login": uLogin.value, "password": pass});
       let http = new Http();
       http.post(url, data)
@@ -57,7 +57,7 @@ export default class Login extends React.Component {
         <div className="form-box">
           <div className="form-top">
             <div className="form-top-left">
-              <h3>Login to our site</h3>
+              <h3>Login to the site</h3>
               <p>Enter username and password to log on:</p>
             </div>
             <div className="form-top-right">

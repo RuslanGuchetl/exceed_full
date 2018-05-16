@@ -112,7 +112,7 @@ export default class Profile extends React.Component {
 
 
 function checkurl() {
-  let url = "/user";
+  let url = "http://localhost:3000/user";
   let data = localStorage.getItem('token');
   let body = document.getElementById('root');
   body.className += ' ' + 'modalBlock';

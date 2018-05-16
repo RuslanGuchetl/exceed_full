@@ -33,7 +33,7 @@ export default class Regist extends React.Component {
         e.preventDefault();
         let body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        let url = "/registration";
+        let url = "http://localhost:3000/registration";
         let data = JSON.stringify({
           "login": newLogin,
           "password": userPw.value,

@@ -28,6 +28,7 @@ export default class ProductList extends React.Component {
       showEditItem: false,
       isload: false,
       mobileShow: false,
+      mobilePagination: 3,
       menuIcon: 'fa-arrow-down',
       pageCount: 1,
       itemsPerPage: 12,
@@ -43,7 +44,7 @@ export default class ProductList extends React.Component {
       this.props.onUpd('Shop');
       this.props.onUpd.bind(this);
     }
-    let url = "/items";
+    let url = "http://localhost:3000/items";
     let data = localStorage.getItem('token');
     let http = new Http();
 
@@ -182,7 +183,7 @@ export default class ProductList extends React.Component {
   }
 
   updateArray() {
-    let url = "/items";
+    let url = "http://localhost:3000/items";
     let data = localStorage.getItem('token');
     let http = new Http();
     let body = document.getElementById('root');
@@ -262,7 +263,7 @@ export default class ProductList extends React.Component {
     if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "/categories";
+      let url = "http://localhost:3000/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "itemName": c
@@ -299,7 +300,7 @@ export default class ProductList extends React.Component {
     if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "/categories";
+      let url = "http://localhost:3000/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "id": this.state.currentCategId,
@@ -396,7 +397,7 @@ export default class ProductList extends React.Component {
     if (sure) {
       let body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
-      let url = "/categories";
+      let url = "http://localhost:3000/categories";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "role": localStorage.getItem('role'),
@@ -595,7 +596,7 @@ export default class ProductList extends React.Component {
   }
 
   addItem1() {
-    let url = "/items";
+    let url = "http://localhost:3000/items";
     let data = localStorage.getItem('token');
     let http = new Http();
     let body = document.getElementById('root');
@@ -639,6 +640,13 @@ export default class ProductList extends React.Component {
     window.scrollTo(0, 0);
   }
 
+  mobile() {
+    this.setState({mobilePagination: 2, mobileShow: false});
+  }
+
+  desktop() {
+    this.setState({mobilePagination: 3, mobileShow: true});
+  }
 
   closeModal(bool) {
     if (bool) {
@@ -689,6 +697,7 @@ export default class ProductList extends React.Component {
               {matches =>
                 matches ? (
                     <ul className="menuCatalog">
+                      {this.mobile.bind(this)}
                       <span className="menuLabel" onClick={this.showCategs.bind(this)}>
                       <i className={"fas " + this.state.menuIcon}/>
                         {this.state.editCategInp}
@@ -716,6 +725,7 @@ export default class ProductList extends React.Component {
                     </ul>
                   ) : (
                     <ul className="menuCatalog">
+                      {this.desktop.bind(this)}
                       <span className="menuLabel">Categories:</span>
                       {this.list(this.state.arrayCategories)}
                       {show3 && (<li className="MenuItems MenuItemsAdd">
@@ -739,20 +749,38 @@ export default class ProductList extends React.Component {
             </Media>
           </div>
         )}
-
-          <ReactPaginate previousLabel={"prev"}
-                         nextLabel={"next"}
-                         breakLabel={".."}
-                         breakClassName={"break-me"}
-                         pageCount={this.state.pageCount}
-                         marginPagesDisplayed={1}
-                         pageRangeDisplayed={2}
-                         onPageChange={this.handlePageClick.bind(this)}
-                         containerClassName={"pagination paginationTop"}
-                         subContainerClassName={"pages paginationTop"}
-                         activeClassName={"active"}
-                         forcePage={this.state.selected}
-          />
+        <Media query="(max-width: 768px)">
+          {matches =>
+            matches ? (
+        <ReactPaginate previousLabel={"prev"}
+                       nextLabel={"next"}
+                       breakLabel={".."}
+                       breakClassName={"break-me"}
+                       pageCount={this.state.pageCount}
+                       marginPagesDisplayed={1}
+                       pageRangeDisplayed={2}
+                       onPageChange={this.handlePageClick.bind(this)}
+                       containerClassName={"pagination paginationTop"}
+                       subContainerClassName={"pages paginationTop"}
+                       activeClassName={"active"}
+                       forcePage={this.state.selected}
+        />
+              ) : (
+                <ReactPaginate previousLabel={"prev"}
+                               nextLabel={"next"}
+                               breakLabel={".."}
+                               breakClassName={"break-me"}
+                               pageCount={this.state.pageCount}
+                               marginPagesDisplayed={2}
+                               pageRangeDisplayed={3}
+                               onPageChange={this.handlePageClick.bind(this)}
+                               containerClassName={"pagination paginationTop"}
+                               subContainerClassName={"pages paginationTop"}
+                               activeClassName={"active"}
+                               forcePage={this.state.selected}
+                />
+              )}
+        </Media>
 
         {show && (
           <div className="itemsList">
@@ -765,32 +793,53 @@ export default class ProductList extends React.Component {
           </div>
         )}
 
-          <ReactPaginate previousLabel={"prev"}
-                         nextLabel={"next"}
-                         breakLabel={".."}
-                         breakClassName={"break-me"}
-                         pageCount={this.state.pageCount}
-                         marginPagesDisplayed={1}
-                         pageRangeDisplayed={2}
-                         onPageChange={this.handlePageClick.bind(this)}
-                         containerClassName={"pagination"}
-                         subContainerClassName={"pages pagination"}
-                         activeClassName={"active"}
-                         forcePage={this.state.selected}
-          />
+        <Media query="(max-width: 768px)">
+          {matches =>
+            matches ? (
+                <ReactPaginate previousLabel={"prev"}
+                               nextLabel={"next"}
+                               breakLabel={".."}
+                               breakClassName={"break-me"}
+                               pageCount={this.state.pageCount}
+                               marginPagesDisplayed={1}
+                               pageRangeDisplayed={2}
+                               onPageChange={this.handlePageClick.bind(this)}
+                               containerClassName={"pagination paginationTop"}
+                               subContainerClassName={"pages paginationTop"}
+                               activeClassName={"active"}
+                               forcePage={this.state.selected}
+                />
+              ) : (
+                <ReactPaginate previousLabel={"prev"}
+                               nextLabel={"next"}
+                               breakLabel={".."}
+                               breakClassName={"break-me"}
+                               pageCount={this.state.pageCount}
+                               marginPagesDisplayed={2}
+                               pageRangeDisplayed={3}
+                               onPageChange={this.handlePageClick.bind(this)}
+                               containerClassName={"pagination paginationTop"}
+                               subContainerClassName={"pages paginationTop"}
+                               activeClassName={"active"}
+                               forcePage={this.state.selected}
+                />
+              )}
+        </Media>
 
         {showEditCateg && (
-          <ModalWind inputId="inputEditCateg" title="category" id={this.state.currentCategId} url="/categories"
+          <ModalWind inputId="inputEditCateg" title="category" id={this.state.currentCategId}
+                     url="http://localhost:3000/categories"
                      value={this.state.editCategInp} onUpd={this.updateItem.bind(this)}
                      closeModal={this.closeModal.bind(this)}/>
         )}
         {showAddItem && (
-          <ModalWind inputId="inputAddItem" title="item" id={this.state.currentCategId} url="/item"
+          <ModalWind inputId="inputAddItem" title="item" id={this.state.currentCategId} url="http://localhost:3000/item"
                      value="" onAdd={this.addItem.bind(this)}
                      closeModal={this.closeModalAdd.bind(this)}/>
         )}
         {showEditItem && (
-          <ModalWind inputId="inputEditItem" title="item" id={this.state.currentCategId} url="/item"
+          <ModalWind inputId="inputEditItem" title="item" id={this.state.currentCategId}
+                     url="http://localhost:3000/item"
                      value="" onUpd={this.updateItem.bind(this)} items={this.state.editingItem}
                      closeModal={this.closeModalEdit.bind(this)}/>
         )}

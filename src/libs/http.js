@@ -70,7 +70,6 @@ export default class Http {
   requestHttp(type, url, data) {
     let request = new XMLHttpRequest();
     let deferred = Q.defer();
-
     request.open(type, url, true);
     request.setRequestHeader("Content-Type", "application/json");
     request.onload = onload;

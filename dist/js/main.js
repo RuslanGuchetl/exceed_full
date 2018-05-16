@@ -1914,7 +1914,6 @@ var Http = function () {
     value: function requestHttp(type, url, data) {
       var request = new XMLHttpRequest();
       var deferred = _q2.default.defer();
-
       request.open(type, url, true);
       request.setRequestHeader("Content-Type", "application/json");
       request.onload = onload;
@@ -10891,7 +10890,7 @@ var TableList = function (_React$Component) {
       var id = e.target.id;
       var result = confirm('Are you sure?');
       if (result) {
-        var url = "/users";
+        var url = "http://localhost:3000/users";
         var data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "id": id
@@ -11079,7 +11078,7 @@ var UsersList = function (_React$Component) {
     value: function componentWillMount() {
       var _this2 = this;
 
-      var url = "/users";
+      var url = "http://localhost:3000/users";
       var data = localStorage.getItem('token');
       var http = new _http2.default();
       var body = document.getElementById('root');
@@ -11105,7 +11104,7 @@ var UsersList = function (_React$Component) {
       var formData = new FormData();
       formData.append('token', localStorage.getItem('token'));
       formData.append('photo', this.state.file);
-      fetch('/image/upload', {
+      fetch('http://localhost:3000/image/upload', {
         method: 'POST',
         body: formData
       });
@@ -12049,6 +12048,7 @@ var ProductList = function (_React$Component) {
       showEditItem: false,
       isload: false,
       mobileShow: false,
+      mobilePagination: 3,
       menuIcon: 'fa-arrow-down',
       pageCount: 1,
       itemsPerPage: 12,
@@ -12069,7 +12069,7 @@ var ProductList = function (_React$Component) {
         this.props.onUpd('Shop');
         this.props.onUpd.bind(this);
       }
-      var url = "/items";
+      var url = "http://localhost:3000/items";
       var data = localStorage.getItem('token');
       var http = new _http2.default();
 
@@ -12229,7 +12229,7 @@ var ProductList = function (_React$Component) {
     value: function updateArray() {
       var _this4 = this;
 
-      var url = "/items";
+      var url = "http://localhost:3000/items";
       var data = localStorage.getItem('token');
       var http = new _http2.default();
       var body = document.getElementById('root');
@@ -12316,7 +12316,7 @@ var ProductList = function (_React$Component) {
       if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
         var body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        var url = "/categories";
+        var url = "http://localhost:3000/categories";
         var data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "itemName": c
@@ -12352,7 +12352,7 @@ var ProductList = function (_React$Component) {
       if (c.match(/^(([A-za-z]{1,10})((.)?)(([A-za-z0-9]{1,7})?))$/)) {
         var body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        var url = "/categories";
+        var url = "http://localhost:3000/categories";
         var data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "id": this.state.currentCategId,
@@ -12485,7 +12485,7 @@ var ProductList = function (_React$Component) {
       if (sure) {
         var body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        var url = "/categories";
+        var url = "http://localhost:3000/categories";
         var data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "role": localStorage.getItem('role'),
@@ -12687,7 +12687,7 @@ var ProductList = function (_React$Component) {
     value: function addItem1() {
       var _this9 = this;
 
-      var url = "/items";
+      var url = "http://localhost:3000/items";
       var data = localStorage.getItem('token');
       var http = new _http2.default();
       var body = document.getElementById('root');
@@ -12727,6 +12727,16 @@ var ProductList = function (_React$Component) {
       var pageArray = array.slice(selected * itemsPerPage, (selected + 1) * itemsPerPage);
       this.setState({ currentArrayOnPage: pageArray, selected: selected });
       window.scrollTo(0, 0);
+    }
+  }, {
+    key: "mobile",
+    value: function mobile() {
+      this.setState({ mobilePagination: 2, mobileShow: false });
+    }
+  }, {
+    key: "desktop",
+    value: function desktop() {
+      this.setState({ mobilePagination: 3, mobileShow: true });
     }
   }, {
     key: "closeModal",
@@ -12791,6 +12801,7 @@ var ProductList = function (_React$Component) {
               return matches ? _react2.default.createElement(
                 "ul",
                 { className: "menuCatalog" },
+                _this10.mobile.bind(_this10),
                 _react2.default.createElement(
                   "span",
                   { className: "menuLabel", onClick: _this10.showCategs.bind(_this10) },
@@ -12828,6 +12839,7 @@ var ProductList = function (_React$Component) {
               ) : _react2.default.createElement(
                 "ul",
                 { className: "menuCatalog" },
+                _this10.desktop.bind(_this10),
                 _react2.default.createElement(
                   "span",
                   { className: "menuLabel" },
@@ -12861,19 +12873,37 @@ var ProductList = function (_React$Component) {
             }
           )
         ),
-        _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
-          nextLabel: "next",
-          breakLabel: "..",
-          breakClassName: "break-me",
-          pageCount: this.state.pageCount,
-          marginPagesDisplayed: 1,
-          pageRangeDisplayed: 2,
-          onPageChange: this.handlePageClick.bind(this),
-          containerClassName: "pagination paginationTop",
-          subContainerClassName: "pages paginationTop",
-          activeClassName: "active",
-          forcePage: this.state.selected
-        }),
+        _react2.default.createElement(
+          _reactMedia2.default,
+          { query: "(max-width: 768px)" },
+          function (matches) {
+            return matches ? _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
+              nextLabel: "next",
+              breakLabel: "..",
+              breakClassName: "break-me",
+              pageCount: _this10.state.pageCount,
+              marginPagesDisplayed: 1,
+              pageRangeDisplayed: 2,
+              onPageChange: _this10.handlePageClick.bind(_this10),
+              containerClassName: "pagination paginationTop",
+              subContainerClassName: "pages paginationTop",
+              activeClassName: "active",
+              forcePage: _this10.state.selected
+            }) : _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
+              nextLabel: "next",
+              breakLabel: "..",
+              breakClassName: "break-me",
+              pageCount: _this10.state.pageCount,
+              marginPagesDisplayed: 2,
+              pageRangeDisplayed: 3,
+              onPageChange: _this10.handlePageClick.bind(_this10),
+              containerClassName: "pagination paginationTop",
+              subContainerClassName: "pages paginationTop",
+              activeClassName: "active",
+              forcePage: _this10.state.selected
+            });
+          }
+        ),
         show && _react2.default.createElement(
           "div",
           { className: "itemsList" },
@@ -12884,26 +12914,46 @@ var ProductList = function (_React$Component) {
             _react2.default.createElement("i", { className: "fas fa-plus" })
           )
         ),
-        _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
-          nextLabel: "next",
-          breakLabel: "..",
-          breakClassName: "break-me",
-          pageCount: this.state.pageCount,
-          marginPagesDisplayed: 1,
-          pageRangeDisplayed: 2,
-          onPageChange: this.handlePageClick.bind(this),
-          containerClassName: "pagination",
-          subContainerClassName: "pages pagination",
-          activeClassName: "active",
-          forcePage: this.state.selected
-        }),
-        showEditCateg && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditCateg", title: "category", id: this.state.currentCategId, url: "/categories",
+        _react2.default.createElement(
+          _reactMedia2.default,
+          { query: "(max-width: 768px)" },
+          function (matches) {
+            return matches ? _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
+              nextLabel: "next",
+              breakLabel: "..",
+              breakClassName: "break-me",
+              pageCount: _this10.state.pageCount,
+              marginPagesDisplayed: 1,
+              pageRangeDisplayed: 2,
+              onPageChange: _this10.handlePageClick.bind(_this10),
+              containerClassName: "pagination paginationTop",
+              subContainerClassName: "pages paginationTop",
+              activeClassName: "active",
+              forcePage: _this10.state.selected
+            }) : _react2.default.createElement(_reactPaginate2.default, { previousLabel: "prev",
+              nextLabel: "next",
+              breakLabel: "..",
+              breakClassName: "break-me",
+              pageCount: _this10.state.pageCount,
+              marginPagesDisplayed: 2,
+              pageRangeDisplayed: 3,
+              onPageChange: _this10.handlePageClick.bind(_this10),
+              containerClassName: "pagination paginationTop",
+              subContainerClassName: "pages paginationTop",
+              activeClassName: "active",
+              forcePage: _this10.state.selected
+            });
+          }
+        ),
+        showEditCateg && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditCateg", title: "category", id: this.state.currentCategId,
+          url: "http://localhost:3000/categories",
           value: this.state.editCategInp, onUpd: this.updateItem.bind(this),
           closeModal: this.closeModal.bind(this) }),
-        showAddItem && _react2.default.createElement(_modalWindow2.default, { inputId: "inputAddItem", title: "item", id: this.state.currentCategId, url: "/item",
+        showAddItem && _react2.default.createElement(_modalWindow2.default, { inputId: "inputAddItem", title: "item", id: this.state.currentCategId, url: "http://localhost:3000/item",
           value: "", onAdd: this.addItem.bind(this),
           closeModal: this.closeModalAdd.bind(this) }),
-        showEditItem && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditItem", title: "item", id: this.state.currentCategId, url: "/item",
+        showEditItem && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditItem", title: "item", id: this.state.currentCategId,
+          url: "http://localhost:3000/item",
           value: "", onUpd: this.updateItem.bind(this), items: this.state.editingItem,
           closeModal: this.closeModalEdit.bind(this) })
       );
@@ -13227,7 +13277,7 @@ var EditItem = function (_React$Component) {
       var body = document.getElementById('root');
       body.className += ' ' + 'modalBlock';
       if (userNewPass == '') {
-        var url = "/user";
+        var url = "http://localhost:3000/user";
         var data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "login": userLogin,
@@ -13251,7 +13301,7 @@ var EditItem = function (_React$Component) {
           console.log('Error: ', e);
         });
       } else {
-        var _url = "/user";
+        var _url = "http://localhost:3000/user";
         var _data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "login": userLogin,
@@ -13293,7 +13343,7 @@ var EditItem = function (_React$Component) {
         if (ready) {
           var body = document.getElementById('root');
           body.className += ' ' + 'modalBlock';
-          var url = "/user";
+          var url = "http://localhost:3000/user";
           var data = JSON.stringify({
             "token": localStorage.getItem('token'),
             "current": (0, _jsSha2.default)(userCurrent)
@@ -13873,7 +13923,7 @@ exports.default = Profile;
 
 
 function checkurl() {
-  var url = "/user";
+  var url = "http://localhost:3000/user";
   var data = localStorage.getItem('token');
   var body = document.getElementById('root');
   body.className += ' ' + 'modalBlock';
@@ -19304,7 +19354,7 @@ var Login = function (_React$Component) {
         e.preventDefault();
         var body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        var url = "/login";
+        var url = "http://localhost:3000/login";
         var data = JSON.stringify({ "login": uLogin.value, "password": pass });
         var http = new _http2.default();
         http.post(url, data).then(function (object) {
@@ -19333,7 +19383,7 @@ var Login = function (_React$Component) {
               _react2.default.createElement(
                 "h3",
                 null,
-                "Login to our site"
+                "Login to the site"
               ),
               _react2.default.createElement(
                 "p",
@@ -21948,7 +21998,7 @@ var Regist = function (_React$Component) {
           e.preventDefault();
           var body = document.getElementById('root');
           body.className += ' ' + 'modalBlock';
-          var url = "/registration";
+          var url = "http://localhost:3000/registration";
           var data = JSON.stringify({
             "login": newLogin,
             "password": userPw.value,

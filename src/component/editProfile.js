@@ -56,7 +56,7 @@ export default class EditItem extends React.Component {
     let body = document.getElementById('root');
     body.className += ' ' + 'modalBlock';
     if (userNewPass == '') {
-      let url = "/user";
+      let url = "http://localhost:3000/user";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "login": userLogin,
@@ -82,7 +82,7 @@ export default class EditItem extends React.Component {
           console.log('Error: ', e);
         });
     } else {
-      let url = "/user";
+      let url = "http://localhost:3000/user";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "login": userLogin,
@@ -123,7 +123,7 @@ export default class EditItem extends React.Component {
       if (ready) {
         let body = document.getElementById('root');
         body.className += ' ' + 'modalBlock';
-        let url = "/user";
+        let url = "http://localhost:3000/user";
         let data = JSON.stringify({
           "token": localStorage.getItem('token'),
           "current": Sha256(userCurrent)

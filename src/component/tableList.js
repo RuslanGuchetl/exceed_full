@@ -14,7 +14,7 @@ export default class TableList extends React.Component {
     let id = e.target.id;
     let result = confirm('Are you sure?');
     if (result) {
-      let url = "/users";
+      let url = "http://localhost:3000/users";
       let data = JSON.stringify({
         "token": localStorage.getItem('token'),
         "id": id
