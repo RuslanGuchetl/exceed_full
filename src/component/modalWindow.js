@@ -15,6 +15,7 @@ export default class ModalWind extends React.Component {
       price: '',
       oldPrice: '',
       file: '',
+      uploadDisable: true,
       editImage: false
     }
   }
@@ -153,18 +154,58 @@ export default class ModalWind extends React.Component {
 
   handleSubmit(e) {
     e.preventDefault();
+    let body = document.getElementById('root');
+    body.className += ' ' + 'modalBlock';
+    let _this = this;
+    if (this.state.file) {
+      let formData = new FormData();
+      formData.append('token', localStorage.getItem('token'));
+      formData.append('itemCategId', this.props.id);
+      formData.append('itemId', this.state.itemId);
+      formData.append('photo', this.state.file);
+      let url = serverUrl + '/image/upload';
+      fetch(url, {
+        method: 'POST',
+        body: formData
+      })
+        .then(function(response) {
+          if (response) {
+            body.className = body.className.replace(" modalBlock", "");
+            _this.imgReady();
+          } else {
+            console.log('Error!');
+            this.setState({file: '', uploadDisable: true});
+          }
+      });
+    } else {
+      this.setState({file: '', uploadDisable: true});
+    }
+  }
 
-    let formData = new FormData();
-    formData.append('token', localStorage.getItem('token'));
-    formData.append('itemCategId', this.props.id);
-    formData.append('itemId',  this.state.itemId);
-    formData.append('photo', this.state.file);
-    let url = serverUrl + '/image/upload';
-    fetch(url, {
-      method: 'POST',
-      body: formData
+  imgReady() {
+    let body = document.getElementById('root');
+    body.className += ' ' + 'modalBlock';
+    let url = this.props.url + '/image';
+    let data = JSON.stringify({
+      "token": localStorage.getItem('token'),
+      "itemId": this.state.itemId,
+      "itemImg": true
     });
+    let http = new Http();
 
+    http.post(url, data)
+      .then(() => {
+        if (this.props.updateItemImage) {
+          this.props.updateItemImage(this.state.itemId, this.props.id, true);
+          this.props.updateItemImage.bind(this);
+        }
+        body.className = body.className.replace(" modalBlock", "");
+        this.setState({file: '', uploadDisable: true});
+      })
+      .catch((e) => {
+        body.className = body.className.replace(" modalBlock", "");
+        console.log('Error: ', e);
+      });
   }
 
 
@@ -174,11 +215,15 @@ export default class ModalWind extends React.Component {
     let reader = new FileReader();
     let file = e.target.files[0];
 
-    reader.onloadend = () => {
-      this.setState({file: file});
-    };
+    if (file) {
+      reader.onloadend = () => {
+        this.setState({file: file, uploadDisable: false});
+      };
 
-    reader.readAsDataURL(file);
+      reader.readAsDataURL(file);
+    } else {
+      this.setState({file: '', uploadDisable: true});
+    }
   }
 
   render() {
@@ -271,6 +316,7 @@ export default class ModalWind extends React.Component {
                      onChange={(e) => this.handleImageChange(e)}/>
               <button className="submitButton"
                       type="submit"
+                      disabled={this.state.uploadDisable}
                       onClick={(e) => this.handleSubmit(e)}>Upload
               </button>
             </form>

@@ -11243,19 +11243,20 @@ var ModalWind = function (_React$Component) {
   function ModalWind(props) {
     _classCallCheck(this, ModalWind);
 
-    var _this = _possibleConstructorReturn(this, (ModalWind.__proto__ || Object.getPrototypeOf(ModalWind)).call(this, props));
+    var _this2 = _possibleConstructorReturn(this, (ModalWind.__proto__ || Object.getPrototypeOf(ModalWind)).call(this, props));
 
-    _this.state = {
-      value: _this.props.value,
-      inputId: _this.props.inputId,
+    _this2.state = {
+      value: _this2.props.value,
+      inputId: _this2.props.inputId,
       itemName: '',
       itemId: '',
       price: '',
       oldPrice: '',
       file: '',
+      uploadDisable: true,
       editImage: false
     };
-    return _this;
+    return _this2;
   }
 
   _createClass(ModalWind, [{
@@ -11272,7 +11273,7 @@ var ModalWind = function (_React$Component) {
   }, {
     key: 'editCheck',
     value: function editCheck() {
-      var _this2 = this;
+      var _this3 = this;
 
       var c = this.state.value;
       c = c.trim();
@@ -11295,9 +11296,9 @@ var ModalWind = function (_React$Component) {
         var http = new _http2.default();
 
         http.put(url, data).then(function () {
-          if (_this2.props.onUpd) {
-            _this2.props.onUpd(_this2.props.title, _this2.props.id, c, _this2.state.price, id);
-            _this2.props.onUpd.bind(_this2);
+          if (_this3.props.onUpd) {
+            _this3.props.onUpd(_this3.props.title, _this3.props.id, c, _this3.state.price, id);
+            _this3.props.onUpd.bind(_this3);
           }
           body.className = body.className.replace(" modalBlock", "");
         }).catch(function (e) {
@@ -11312,7 +11313,7 @@ var ModalWind = function (_React$Component) {
   }, {
     key: 'addCheck',
     value: function addCheck() {
-      var _this3 = this;
+      var _this4 = this;
 
       var c = this.state.value;
       c = c.trim();
@@ -11329,9 +11330,9 @@ var ModalWind = function (_React$Component) {
         var http = new _http2.default();
 
         http.post(url, data).then(function () {
-          if (_this3.props.onAdd) {
-            _this3.props.onAdd(true);
-            _this3.props.onAdd.bind(_this3);
+          if (_this4.props.onAdd) {
+            _this4.props.onAdd(true);
+            _this4.props.onAdd.bind(_this4);
           }
           body.className = body.className.replace(" modalBlock", "");
         }).catch(function (e) {
@@ -11400,38 +11401,83 @@ var ModalWind = function (_React$Component) {
     key: 'handleSubmit',
     value: function handleSubmit(e) {
       e.preventDefault();
+      var body = document.getElementById('root');
+      body.className += ' ' + 'modalBlock';
+      var _this = this;
+      if (this.state.file) {
+        var formData = new FormData();
+        formData.append('token', localStorage.getItem('token'));
+        formData.append('itemCategId', this.props.id);
+        formData.append('itemId', this.state.itemId);
+        formData.append('photo', this.state.file);
+        var url = _serverUrl.serverUrl + '/image/upload';
+        fetch(url, {
+          method: 'POST',
+          body: formData
+        }).then(function (response) {
+          if (response) {
+            body.className = body.className.replace(" modalBlock", "");
+            _this.imgReady();
+          } else {
+            console.log('Error!');
+            this.setState({ file: '', uploadDisable: true });
+          }
+        });
+      } else {
+        this.setState({ file: '', uploadDisable: true });
+      }
+    }
+  }, {
+    key: 'imgReady',
+    value: function imgReady() {
+      var _this5 = this;
 
-      var formData = new FormData();
-      formData.append('token', localStorage.getItem('token'));
-      formData.append('itemCategId', this.props.id);
-      formData.append('itemId', this.state.itemId);
-      formData.append('photo', this.state.file);
-      var url = _serverUrl.serverUrl + '/image/upload';
-      fetch(url, {
-        method: 'POST',
-        body: formData
+      var body = document.getElementById('root');
+      body.className += ' ' + 'modalBlock';
+      var url = this.props.url + '/image';
+      var data = JSON.stringify({
+        "token": localStorage.getItem('token'),
+        "itemId": this.state.itemId,
+        "itemImg": true
+      });
+      var http = new _http2.default();
+
+      http.post(url, data).then(function () {
+        if (_this5.props.updateItemImage) {
+          _this5.props.updateItemImage(_this5.state.itemId, _this5.props.id, true);
+          _this5.props.updateItemImage.bind(_this5);
+        }
+        body.className = body.className.replace(" modalBlock", "");
+        _this5.setState({ file: '', uploadDisable: true });
+      }).catch(function (e) {
+        body.className = body.className.replace(" modalBlock", "");
+        console.log('Error: ', e);
       });
     }
   }, {
     key: 'handleImageChange',
     value: function handleImageChange(e) {
-      var _this4 = this;
+      var _this6 = this;
 
       e.preventDefault();
 
       var reader = new FileReader();
       var file = e.target.files[0];
 
-      reader.onloadend = function () {
-        _this4.setState({ file: file });
-      };
+      if (file) {
+        reader.onloadend = function () {
+          _this6.setState({ file: file, uploadDisable: false });
+        };
 
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      } else {
+        this.setState({ file: '', uploadDisable: true });
+      }
     }
   }, {
     key: 'render',
     value: function render() {
-      var _this5 = this;
+      var _this7 = this;
 
       return _react2.default.createElement(
         'div',
@@ -11552,19 +11598,20 @@ var ModalWind = function (_React$Component) {
           this.props.items && _react2.default.createElement(
             'form',
             { className: 'uploadForm', onSubmit: function onSubmit(e) {
-                return _this5.handleSubmit(e);
+                return _this7.handleSubmit(e);
               } },
             _react2.default.createElement('input', { className: 'fileInput',
               type: 'file',
               onChange: function onChange(e) {
-                return _this5.handleImageChange(e);
+                return _this7.handleImageChange(e);
               } }),
             _react2.default.createElement(
               'button',
               { className: 'submitButton',
                 type: 'submit',
+                disabled: this.state.uploadDisable,
                 onClick: function onClick(e) {
-                  return _this5.handleSubmit(e);
+                  return _this7.handleSubmit(e);
                 } },
               'Upload'
             )
@@ -12085,6 +12132,7 @@ var ProductList = function (_React$Component) {
       isload: false,
       mobileShow: false,
       mobilePagination: 3,
+      plusExtension: '',
       menuIcon: 'fa-arrow-down',
       pageCount: 1,
       itemsPerPage: 12,
@@ -12131,13 +12179,15 @@ var ProductList = function (_React$Component) {
           });
 
           var fullCurrentArray = indexedItems[firstId];
+          var pageCount = 0;
 
-          var pageCount = Math.ceil(indexedItems[firstId].length / _this2.state.itemsPerPage);
+          if (indexedItems[firstId]) {
+            pageCount = Math.ceil(indexedItems[firstId].length / _this2.state.itemsPerPage);
+            arrayOnPage = fullCurrentArray.slice(0, itemsCount);
+          }
           if (pageCount == 0) {
             pageCount = 1;
           }
-
-          arrayOnPage = fullCurrentArray.slice(0, itemsCount);
 
           _this2.setState({
             arrayCategories: object.arrayCateg,
@@ -12159,7 +12209,7 @@ var ProductList = function (_React$Component) {
             currentArray: [],
             pageCount: 1,
             isload: true,
-            show: true
+            show: false
           });
           body.className = body.className.replace(" modalBlock", "");
         }
@@ -12430,7 +12480,7 @@ var ProductList = function (_React$Component) {
                 _react2.default.createElement(
                   "div",
                   { className: "itemImage" },
-                  _react2.default.createElement("img", { src: _imageServerUrl.imageServerUrl + _this7.state.currentCategId + '/' + item._id + '.jpg' })
+                  item.img && _react2.default.createElement("img", { src: _imageServerUrl.imageServerUrl + _this7.state.currentCategId + '/' + item._id + '.jpg' + _this7.state.plusExtension })
                 ),
                 _react2.default.createElement(
                   "div",
@@ -12454,7 +12504,7 @@ var ProductList = function (_React$Component) {
                 _react2.default.createElement(
                   "div",
                   { className: "itemImage" },
-                  _react2.default.createElement("img", { src: _imageServerUrl.imageServerUrl + _this7.state.currentCategId + '/' + item._id + '.jpg' })
+                  item.img && _react2.default.createElement("img", { src: _imageServerUrl.imageServerUrl + _this7.state.currentCategId + '/' + item._id + '.jpg' })
                 ),
                 _react2.default.createElement(
                   "div",
@@ -12526,7 +12576,8 @@ var ProductList = function (_React$Component) {
           "token": localStorage.getItem('token'),
           "role": localStorage.getItem('role'),
           "thisName": name,
-          "thisId": id
+          "thisId": id,
+          "parentsId": this.state.currentCategId
         });
         var http = new _http2.default();
 
@@ -12613,7 +12664,8 @@ var ProductList = function (_React$Component) {
                 indexedItems: {},
                 currentArray: [],
                 currentArrayOnPage: [],
-                editCategInp: ''
+                editCategInp: '',
+                show: false
               });
             }
           }
@@ -12753,6 +12805,76 @@ var ProductList = function (_React$Component) {
         body.className = body.className.replace(" modalBlock", "");
         console.log('Error: ', e);
       });
+    }
+  }, {
+    key: "updateImgs",
+    value: function updateImgs(itemId, categId, bool) {
+      if (bool) {
+        var mod = '?lastmod=';
+        mod += Math.random() * 999999;
+
+        this.setState({ plusExtension: mod });
+
+        var currentArray = this.state.currentArray;
+        var currentArrayOnPage = this.state.currentArrayOnPage;
+        var indexedItems = this.state.indexedItems;
+        var categArray = indexedItems[categId];
+
+        currentArray.forEach(function (elem) {
+          if (elem._id == itemId) {
+            elem['img'] = false;
+          }
+        });
+
+        currentArrayOnPage.forEach(function (elem) {
+          if (elem._id == itemId) {
+            elem['img'] = false;
+          }
+        });
+
+        for (var i = 0; i < categArray.length; i++) {
+          if (categArray[i]._id == itemId) {
+            categArray[i].img = false;
+          }
+        }
+        indexedItems[categId] = categArray;
+
+        this.setState({ currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, indexedItems: indexedItems, showEditItem: false });
+
+        this.updateImgs1(itemId, categId, bool);
+      }
+    }
+  }, {
+    key: "updateImgs1",
+    value: function updateImgs1(itemId, categId, bool) {
+      if (bool) {
+        var currentArray = this.state.currentArray;
+        var currentArrayOnPage = this.state.currentArrayOnPage;
+        var indexedItems = this.state.indexedItems;
+        var categArray = indexedItems[categId];
+
+        currentArray.forEach(function (elem) {
+          if (elem._id == itemId) {
+            elem['img'] = true;
+          }
+        });
+
+        currentArrayOnPage.forEach(function (elem) {
+          if (elem._id == itemId) {
+            elem['img'] = true;
+          }
+        });
+
+        for (var i = 0; i < categArray.length; i++) {
+          if (categArray[i]._id == itemId) {
+            categArray[i].img = true;
+          }
+        }
+
+        indexedItems[categId] = categArray;
+
+        this.setState({ currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, indexedItems: indexedItems });
+      }
     }
   }, {
     key: "handlePageClick",
@@ -12989,7 +13111,7 @@ var ProductList = function (_React$Component) {
           value: "", onAdd: this.addItem.bind(this),
           closeModal: this.closeModalAdd.bind(this) }),
         showEditItem && _react2.default.createElement(_modalWindow2.default, { inputId: "inputEditItem", title: "item", id: this.state.currentCategId,
-          url: _serverUrl.serverUrl + "/item",
+          url: _serverUrl.serverUrl + "/item", updateItemImage: this.updateImgs.bind(this),
           value: "", onUpd: this.updateItem.bind(this), items: this.state.editingItem,
           closeModal: this.closeModalEdit.bind(this) })
       );

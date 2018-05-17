@@ -31,6 +31,7 @@ export default class ProductList extends React.Component {
       isload: false,
       mobileShow: false,
       mobilePagination: 3,
+      plusExtension: '',
       menuIcon: 'fa-arrow-down',
       pageCount: 1,
       itemsPerPage: 12,
@@ -73,13 +74,17 @@ export default class ProductList extends React.Component {
           });
 
           let fullCurrentArray = indexedItems[firstId];
+          let pageCount = 0;
 
-          let pageCount = Math.ceil(indexedItems[firstId].length / this.state.itemsPerPage);
+          if (indexedItems[firstId]) {
+            pageCount = Math.ceil(indexedItems[firstId].length / this.state.itemsPerPage);
+            arrayOnPage = fullCurrentArray.slice(0, itemsCount);
+
+          }
           if (pageCount == 0) {
             pageCount = 1;
           }
 
-          arrayOnPage = fullCurrentArray.slice(0, itemsCount);
 
           this.setState({
             arrayCategories: object.arrayCateg,
@@ -101,7 +106,7 @@ export default class ProductList extends React.Component {
             currentArray: [],
             pageCount: 1,
             isload: true,
-            show: true
+            show: false
           });
           body.className = body.className.replace(" modalBlock", "");
         }
@@ -339,7 +344,11 @@ export default class ProductList extends React.Component {
         if (this.state.isAdmin) {
           return arr.map((item) => (
             <div className="categoriesItem" key={item._id}>
-              <div className="itemImage"><img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg'}/></div>
+              <div className="itemImage">
+                {item.img && (
+                <img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg' + this.state.plusExtension}/>
+                )}
+              </div>
               <div className="itemTitle">{item.itemName}</div>
               <div className="itemPrice">{item.price}</div>
               <i className="editItemIcon fas fa-edit" id={item._id} onClick={this.editItem.bind(this)}/>
@@ -349,7 +358,11 @@ export default class ProductList extends React.Component {
         } else {
           return arr.map((item) => (
             <div className="categoriesItem" key={item._id}>
-              <div className="itemImage"><img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg'}/></div>
+              <div className="itemImage">
+                {item.img && (
+                  <img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg'}/>
+                )}
+              </div>
               <div className="itemTitle">{item.itemName}</div>
               <div className="itemPrice">{item.price}</div>
             </div>
@@ -404,7 +417,8 @@ export default class ProductList extends React.Component {
         "token": localStorage.getItem('token'),
         "role": localStorage.getItem('role'),
         "thisName": name,
-        "thisId": id
+        "thisId": id,
+        "parentsId": this.state.currentCategId
       });
       let http = new Http();
 
@@ -493,7 +507,8 @@ export default class ProductList extends React.Component {
               indexedItems: {},
               currentArray: [],
               currentArrayOnPage: [],
-              editCategInp: ''
+              editCategInp: '',
+              show: false
             });
           }
         }
@@ -504,6 +519,7 @@ export default class ProductList extends React.Component {
       let itemsArray = this.state.indexedItems;
       let currentArray = this.state.currentArray;
       let currentArrayOnPage = this.state.currentArrayOnPage;
+
 
       let categArray = itemsArray[category];
       for (let i = 0; i < currentArray.length; i++) {
@@ -533,7 +549,7 @@ export default class ProductList extends React.Component {
         indexedItems: itemsArray,
         currentArray: currentArray,
         currentArrayOnPage: currentArrayOnPage,
-        pageCount: pages
+        pageCount: pages,
       });
     }
   }
@@ -630,6 +646,74 @@ export default class ProductList extends React.Component {
         body.className = body.className.replace(" modalBlock", "");
         console.log('Error: ', e);
       });
+  }
+
+  updateImgs(itemId, categId, bool) {
+    if (bool) {
+      let mod = '?lastmod=';
+      mod += Math.random()*999999;
+
+      this.setState({plusExtension: mod});
+
+      let currentArray = this.state.currentArray;
+      let currentArrayOnPage = this.state.currentArrayOnPage;
+      let indexedItems = this.state.indexedItems;
+      let categArray = indexedItems[categId];
+
+      currentArray.forEach(function (elem) {
+        if (elem._id == itemId) {
+          elem['img'] = false;
+        }
+      });
+
+      currentArrayOnPage.forEach(function (elem) {
+        if (elem._id == itemId) {
+          elem['img'] = false;
+        }
+      });
+
+      for (let i = 0; i < categArray.length; i++) {
+        if (categArray[i]._id == itemId) {
+          categArray[i].img = false;
+        }
+      }
+      indexedItems[categId] = categArray;
+
+      this.setState({currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, indexedItems: indexedItems, showEditItem: false});
+
+      this.updateImgs1(itemId, categId, bool);
+    }
+  }
+
+  updateImgs1(itemId, categId, bool) {
+    if (bool) {
+      let currentArray = this.state.currentArray;
+      let currentArrayOnPage = this.state.currentArrayOnPage;
+      let indexedItems = this.state.indexedItems;
+      let categArray = indexedItems[categId];
+
+      currentArray.forEach(function (elem) {
+        if (elem._id == itemId) {
+          elem['img'] = true;
+        }
+      });
+
+      currentArrayOnPage.forEach(function (elem) {
+        if (elem._id == itemId) {
+          elem['img'] = true;
+        }
+      });
+
+      for (let i = 0; i < categArray.length; i++) {
+        if (categArray[i]._id == itemId) {
+          categArray[i].img = true;
+        }
+      }
+
+      indexedItems[categId] = categArray;
+
+      this.setState({currentArray: currentArray, currentArrayOnPage: currentArrayOnPage, indexedItems: indexedItems});
+    }
   }
 
 
@@ -754,19 +838,19 @@ export default class ProductList extends React.Component {
         <Media query="(max-width: 768px)">
           {matches =>
             matches ? (
-        <ReactPaginate previousLabel={"prev"}
-                       nextLabel={"next"}
-                       breakLabel={".."}
-                       breakClassName={"break-me"}
-                       pageCount={this.state.pageCount}
-                       marginPagesDisplayed={1}
-                       pageRangeDisplayed={2}
-                       onPageChange={this.handlePageClick.bind(this)}
-                       containerClassName={"pagination paginationTop"}
-                       subContainerClassName={"pages paginationTop"}
-                       activeClassName={"active"}
-                       forcePage={this.state.selected}
-        />
+                <ReactPaginate previousLabel={"prev"}
+                               nextLabel={"next"}
+                               breakLabel={".."}
+                               breakClassName={"break-me"}
+                               pageCount={this.state.pageCount}
+                               marginPagesDisplayed={1}
+                               pageRangeDisplayed={2}
+                               onPageChange={this.handlePageClick.bind(this)}
+                               containerClassName={"pagination paginationTop"}
+                               subContainerClassName={"pages paginationTop"}
+                               activeClassName={"active"}
+                               forcePage={this.state.selected}
+                />
               ) : (
                 <ReactPaginate previousLabel={"prev"}
                                nextLabel={"next"}
@@ -841,7 +925,7 @@ export default class ProductList extends React.Component {
         )}
         {showEditItem && (
           <ModalWind inputId="inputEditItem" title="item" id={this.state.currentCategId}
-                     url={serverUrl + "/item"}
+                     url={serverUrl + "/item"} updateItemImage={this.updateImgs.bind(this)}
                      value="" onUpd={this.updateItem.bind(this)} items={this.state.editingItem}
                      closeModal={this.closeModalEdit.bind(this)}/>
         )}
