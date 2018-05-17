@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import 'babel-polyfill'
 import Http from '../libs/http.js'
+import {serverUrl} from '../configs/server-url';
+
 
 export default class ModalWind extends React.Component {
   constructor(props) {
@@ -12,6 +14,8 @@ export default class ModalWind extends React.Component {
       itemId: '',
       price: '',
       oldPrice: '',
+      file: '',
+      editImage: false
     }
   }
 
@@ -146,6 +150,37 @@ export default class ModalWind extends React.Component {
     }
   }
 
+
+  handleSubmit(e) {
+    e.preventDefault();
+
+    let formData = new FormData();
+    formData.append('token', localStorage.getItem('token'));
+    formData.append('itemCategId', this.props.id);
+    formData.append('itemId',  this.state.itemId);
+    formData.append('photo', this.state.file);
+    let url = serverUrl + '/image/upload';
+    fetch(url, {
+      method: 'POST',
+      body: formData
+    });
+
+  }
+
+
+  handleImageChange(e) {
+    e.preventDefault();
+
+    let reader = new FileReader();
+    let file = e.target.files[0];
+
+    reader.onloadend = () => {
+      this.setState({file: file});
+    };
+
+    reader.readAsDataURL(file);
+  }
+
   render() {
 
     return (
@@ -228,6 +263,18 @@ export default class ModalWind extends React.Component {
               />
               <i className="CategInputCancel fas fa-ban" onClick={this.priceCancel.bind(this)}/>
             </div>
+
+            {(this.props.items) && (
+              <form className="uploadForm" onSubmit={(e) => this.handleSubmit(e)}>
+              <input className="fileInput"
+                     type="file"
+                     onChange={(e) => this.handleImageChange(e)}/>
+              <button className="submitButton"
+                      type="submit"
+                      onClick={(e) => this.handleSubmit(e)}>Upload
+              </button>
+            </form>
+            )}
 
             <i className="addItemCheck far fa-check-circle" onClick={this.editCheck.bind(this)}/>
             <span className="modalClose" onClick={this.editClose.bind(this)}>&times;</span>

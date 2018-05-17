@@ -6,6 +6,7 @@ import 'babel-polyfill'
 import ReactPaginate from 'react-paginate'
 import Http from '../libs/http.js'
 import {serverUrl} from '../configs/server-url';
+import {imageServerUrl} from '../configs/image-server-url';
 import ModalWind from '../component/modalWindow'
 
 export default class ProductList extends React.Component {
@@ -338,7 +339,7 @@ export default class ProductList extends React.Component {
         if (this.state.isAdmin) {
           return arr.map((item) => (
             <div className="categoriesItem" key={item._id}>
-              <div className="itemImage"><img src="https://placebear.com/g/190/190" alt="image"/></div>
+              <div className="itemImage"><img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg'}/></div>
               <div className="itemTitle">{item.itemName}</div>
               <div className="itemPrice">{item.price}</div>
               <i className="editItemIcon fas fa-edit" id={item._id} onClick={this.editItem.bind(this)}/>
@@ -348,7 +349,7 @@ export default class ProductList extends React.Component {
         } else {
           return arr.map((item) => (
             <div className="categoriesItem" key={item._id}>
-              <div className="itemImage"><img src="https://placebear.com/g/190/190" alt="image"/></div>
+              <div className="itemImage"><img src={imageServerUrl + this.state.currentCategId + '/' + item._id + '.jpg'}/></div>
               <div className="itemTitle">{item.itemName}</div>
               <div className="itemPrice">{item.price}</div>
             </div>
@@ -805,8 +806,8 @@ export default class ProductList extends React.Component {
                                marginPagesDisplayed={1}
                                pageRangeDisplayed={2}
                                onPageChange={this.handlePageClick.bind(this)}
-                               containerClassName={"pagination paginationTop"}
-                               subContainerClassName={"pages paginationTop"}
+                               containerClassName={"pagination"}
+                               subContainerClassName={"pages"}
                                activeClassName={"active"}
                                forcePage={this.state.selected}
                 />
@@ -819,8 +820,8 @@ export default class ProductList extends React.Component {
                                marginPagesDisplayed={2}
                                pageRangeDisplayed={3}
                                onPageChange={this.handlePageClick.bind(this)}
-                               containerClassName={"pagination paginationTop"}
-                               subContainerClassName={"pages paginationTop"}
+                               containerClassName={"pagination"}
+                               subContainerClassName={"pages"}
                                activeClassName={"active"}
                                forcePage={this.state.selected}
                 />
